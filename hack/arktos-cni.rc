@@ -235,6 +235,7 @@ elif [ "${CNIPLUGIN}" == "alktron" ]; then
     install_loopback_cni
 elif [ "${CNIPLUGIN}" == "mizar" ]; then
       echo "cni plugin is mizar; arktos will use mizar to provision pod network"
+      check_mizar_prerequisite
       install_mizar_arktos_containerd
       install_cni_mizar
 else

@@ -18,7 +18,7 @@ sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 CNIPLUGIN=mizar ./hack/arktos-up.sh
 ```
 
-4. Leave the "arktos-up.sh" terminal and opened a another terminal to the master node. Run the following command to confirm that the first network, "default", in system tenant, has already been created. Its state is empty at this moment.
+3. Leave the "arktos-up.sh" terminal and opened a another terminal to the master node. Run the following command to confirm that the first network, "default", in system tenant, has already been created. Its state is empty at this moment.
 ```bash
 ./cluster/kubectl.sh get net
 NAME      TYPE    VPC                      PHASE   DNS

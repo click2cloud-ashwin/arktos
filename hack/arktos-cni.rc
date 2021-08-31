@@ -66,13 +66,42 @@ install_cni_bridge() {
     echo "done with bridge cni plugin installation"
 }
 
+check_mizar_prerequisite() {
+    kernel_version=`uname -r`
+    major=$(echo $kernel_version | cut -d. -f1)
+    minor=$(echo "$kernel_version" | cut -d. -f2)
+    if [[ "$major" < "5" ]] || [[ "$minor" < "6" ]]; then
+        echo "Mizar requires an updated kernel: linux-5.6-rc2 for TCP to function correctly. Current version is $kernel_version"
+        sudo wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/kernelupdate.sh -P /tmp/
+        sudo bash /tmp/kernelupdate.sh
+        exit
+    fi
+
+    declare -a packages=( netaddr docker grpcio grpcio-tools scapy kubernetes )
+        for package in ${packages[@]}; do
+            if [[ $(pip3 freeze | grep "\b$package") ]]; then
+                continue
+            else
+                sudo wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/bootstrap.sh -P /tmp/
+                sudo sed -i 's/docker.io/docker-ce/g' /tmp/bootstrap.sh
+                sudo bash /tmp/bootstrap.sh
+                exit
+            fi
+    done
+}
+
 install_cni_mizar() {
+    sudo rm -f /opt/cni/bin/
+    sudo rm -f /etc/cni/net.d/
     [ ! -d "${cni_conf_dir}" ] && sudo mkdir -p "${cni_conf_dir}"
     [ ! -d "${cni_bin_dir}" ] && sudo mkdir -p "${cni_bin_dir}"
-    sudo find /etc/cni/net.d/ -type f -not -name '10-mizarcni.conf' -delete
 
     export FEATURE_GATES="AllAlpha=false,MandatoryArktosNetwork=true"
     export ARKTOS_NETWORK_TEMPLATE=mizar
+
+    IP_ADDR=$(hostname -I | awk '{print $1}')
+    HOSTNAME=$(hostname)
+    sudo sed -i '2s/.*/'$IP_ADDR' '$HOSTNAME'/' /etc/hosts
 }
 
 build_alktron() {

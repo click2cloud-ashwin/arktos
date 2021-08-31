@@ -11,22 +11,9 @@ If you would like to try with Flannel cni plugin, please ensure to read [multi-n
 sudo rm -f /etc/resolv.conf
 sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 ```
-Also, please ensure the hostname and its ip address in /etc/hosts. For instance, if the hostname is ip-172-31-41-177, ip address is 172.31.41.177:
-```text
-127.0.0.1 localhost
-172.31.41.177 ip-172-31-41-177
-```
-If this machine will be used as the master of a multi-node cluster, please set adequate permissive security groups. For AWS VM in this lab, we allowed inbound rule of ALL-Traffic 0.0.0.0/0.
+  Note: This step is required only when deploying arktos with mizar cni on On-Premise machine. 
 
-2. Install the mizar dependencies
-```bash
-wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/bootstrap.sh
-# If kernel version is less than 5.6 then download the kernelupdate.sh else skip
-wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/kernelupdate.sh  
-# If using docker-ce in the environment then edit the bootstrap.sh and remove the docker.io package before running. 
-bash bootstrap.sh
-```   
-3. Start Arktos cluster
+2. Start Arktos cluster
 ```bash
 CNIPLUGIN=mizar ./hack/arktos-up.sh
 ```

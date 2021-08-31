@@ -73,6 +73,7 @@ check_mizar_prerequisite() {
     if [[ "$major" < "5" ]] || [[ "$minor" < "6" ]]; then
         echo "Mizar requires an updated kernel: linux-5.6-rc2 for TCP to function correctly. Current version is $kernel_version"
         sudo wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/kernelupdate.sh -P /tmp/
+        sudo sed -i '11,27d' /tmp/kernelupdate.sh
         sudo bash /tmp/kernelupdate.sh
         exit
     fi

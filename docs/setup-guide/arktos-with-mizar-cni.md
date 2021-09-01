@@ -12,13 +12,27 @@ sudo rm -f /etc/resolv.conf
 sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 ```
   Note: This step is required only when deploying arktos with mizar cni on On-Premise machine. 
+  
+2. Update Kernel
+To check kernel, run following command
 
-2. Start Arktos cluster
+```bash
+uname -a
+```
+
+To update Kernel, download and run:
+If it is `5.6.0-rc2` then you can skip downloading ```kernelupdate.sh```
+```bash
+wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/kernelupdate.sh
+bash kernelupdate.sh
+```
+
+3. Start Arktos cluster
 ```bash
 CNIPLUGIN=mizar ./hack/arktos-up.sh
 ```
 
-3. Leave the "arktos-up.sh" terminal and opened a another terminal to the master node. Run the following command to confirm that the first network, "default", in system tenant, has already been created. Its state is empty at this moment.
+4. Leave the "arktos-up.sh" terminal and opened a another terminal to the master node. Run the following command to confirm that the first network, "default", in system tenant, has already been created. Its state is empty at this moment.
 ```bash
 ./cluster/kubectl.sh get net
 NAME      TYPE    VPC                      PHASE   DNS

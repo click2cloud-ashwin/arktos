@@ -210,6 +210,10 @@ CNIPLUGIN=${CNIPLUGIN:-"bridge"}
 cni_conf_dir=${CNI_CONF_DIR:-"/etc/cni/net.d"}
 cni_bin_dir=${CNI_BIN_DIR:-"/opt/cni/bin"}
 
+echo Setup: Setup profile
+echo alias kubectl=\'$HOME/go/src/k8s.io/arktos/cluster/kubectl.sh\'  >> ~/.profile
+source "$HOME/.profile"
+
 if [[ -n "${ARKTOS_NO_CNI_PREINSTALLED}" ]]; then
     echo "CNI plugin will be installed after cluster is started"
     echo "Right now the minimum common cni binary package is being installed only"

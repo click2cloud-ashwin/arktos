@@ -4,7 +4,6 @@ This document captures the steps applied to an Arktos cluster lab enabling the u
 
 The steps might change with the progress of development.
 
-If you would like to try with Flannel cni plugin, please ensure to read [multi-node setup guide](multi-node-dev-cluster.md).
 
 1. Prepare lab machines. Particularly, check for local DNS cache (applicable to 127.0.0.53 name server; as it would cause coreDNS to crash with DNS loopback lookup):
 ```bash

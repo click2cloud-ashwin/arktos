@@ -82,8 +82,8 @@ check_mizar_prerequisite() {
 }
 
 install_cni_mizar() {
-    sudo rm -f /opt/cni/bin/
-    sudo rm -f /etc/cni/net.d/
+    sudo rm -rf /opt/cni/bin/
+    sudo rm -rf /etc/cni/net.d/
     [ ! -d "${cni_conf_dir}" ] && sudo mkdir -p "${cni_conf_dir}"
     [ ! -d "${cni_bin_dir}" ] && sudo mkdir -p "${cni_bin_dir}"
 

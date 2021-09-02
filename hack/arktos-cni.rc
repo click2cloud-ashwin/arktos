@@ -74,8 +74,7 @@ check_mizar_prerequisite() {
             else
                 sudo wget https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/bootstrap.sh -P /tmp/
                 sudo sed -i 's/docker.io/docker-ce/g' /tmp/bootstrap.sh
-                sudo sed -i '3,9d' /tmp/bootstrap.sh
-                sudo sed -i '62,79d' /tmp/bootstrap.sh
+                sudo sed -i '3,9d;62,79d' /tmp/bootstrap.sh
                 sudo bash /tmp/bootstrap.sh
             fi
     done

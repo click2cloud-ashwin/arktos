@@ -84,6 +84,7 @@ install_cni_mizar() {
     sudo rm -rf /opt/cni/bin/
     [ ! -d "${cni_conf_dir}" ] && sudo mkdir -p "${cni_conf_dir}"
     [ ! -d "${cni_bin_dir}" ] && sudo mkdir -p "${cni_bin_dir}"
+    sudo find /etc/cni/net.d/ -type f -not -name '10-mizarcni.conf' -delete
 
     export FEATURE_GATES="AllAlpha=false,MandatoryArktosNetwork=true"
     export ARKTOS_NETWORK_TEMPLATE=mizar

@@ -64,8 +64,8 @@ if [[ ! -e "${CONTAINERD_SOCK_PATH}" ]]; then
   exit 1
 fi
 
-# Install simple cni plugin based on env var CNIPLUGIN (bridge, alktron) before cluster is up.
-# If more advanced cni like Flannel is desired, it should be installed AFTER the clsuter is up;
+# Install simple cni plugin based on env var CNIPLUGIN (bridge, alktron, mizar) before cluster is up.
+# If more advanced cni like Flannel is desired, it should be installed AFTER the cluster is up;
 # in that case, please set ARKTOS-NO-CNI_PREINSTALLED to any no-empty value
 source ${KUBE_ROOT}/hack/arktos-cni.rc
 
@@ -114,6 +114,11 @@ if [ "x${GO_OUT}" == "x" ]; then
     make -j4 -C "${KUBE_ROOT}" WHAT="cmd/kubectl cmd/hyperkube cmd/kube-apiserver cmd/kube-controller-manager cmd/workload-controller-manager cmd/cloud-controller-manager cmd/kubelet cmd/kube-proxy cmd/kube-scheduler"
 else
     echo "skipped the build."
+fi
+
+# To build arktos-network-controller
+if  [[ "${CNIPLUGIN}" == "mizar" ]] && [[ ! -f "${KUBE_ROOT}/_output/local/bin/linux/amd64/arktos-network-controller" ]] ; then
+  make -j4 -C "${KUBE_ROOT}" WHAT="cmd/arktos-network-controller"
 fi
 
 # Shut down anyway if there's an error.
@@ -198,6 +203,11 @@ cleanup()
   if [[ -e "${VIRTLET_LOG_DIR}" ]]; then
        echo "Cleanup runtime log folder"
        rm -f -r "${VIRTLET_LOG_DIR}"
+  fi
+
+  # Kill arktos-network-controller process
+  if [[ "${CNIPLUGIN}" == "mizar" ]] && [[ ! "$(ps -ax|grep arktos-network-controller | grep -v grep | wc -l)" -eq 0 ]]; then
+    sudo killall arktos-network-controller 2>/dev/null
   fi
 
   exit 0
@@ -514,6 +524,12 @@ if [[ "${START_MODE}" != "nokubelet" ]]; then
         print_color "Unsupported host OS.  Must be Linux or Mac OS X, kubelet aborted."
         ;;
     esac
+fi
+
+# Applying mizar cni
+if [[ "${CNIPLUGIN}" = "mizar" ]]; then
+  ${KUBECTL} --kubeconfig="${CERT_DIR}/admin.kubeconfig" apply -f https://raw.githubusercontent.com/CentaurusInfra/mizar/dev-next/etc/deploy/deploy.mizar.yaml
+  ${KUBE_ROOT}/_output/local/bin/linux/amd64/arktos-network-controller --kubeconfig=/var/run/kubernetes/admin.kubeconfig --kube-apiserver-ip="$(hostname -I | awk '{print $1}')" > /tmp/arktos-network-controller.log 2>&1 &
 fi
 
 if [[ -n "${PSP_ADMISSION}" && "${AUTHORIZATION_MODE}" = *RBAC* ]]; then
